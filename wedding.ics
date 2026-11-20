@@ -1,0 +1,11 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Seif and Mariam//Wedding//EN
+BEGIN:VEVENT
+UID:seif-mariam-20261203@invitation
+DTSTAMP:20261120T120000Z
+DTSTART:20261203T180000Z
+SUMMARY:Seif and Mariam Wedding
+LOCATION:قاعة جان، نادي الواحة، طريق البلاجات
+END:VEVENT
+END:VCALENDAR
