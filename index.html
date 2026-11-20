@@ -79,8 +79,8 @@
 <section class="confirm-section"><p class="confirm-copy">WE WOULD LOVE TO CELEBRATE WITH YOU</p><button class="confirm-button" id="show-rsvp" type="button" aria-expanded="false" aria-controls="confirm">CONFIRM ATTENDANCE · تأكيد الحضور</button><p class="confirm-note" lang="ar" dir="rtl">يسعدنا حضوركم ومشاركتنا فرحتنا</p></section>
 <section class="rsvp" hidden id="confirm" aria-labelledby="rsvp-heading"><p class="rsvp-intro">WE WOULD LOVE TO KNOW IF YOU CAN JOIN US</p><div class="rsvp-card"><h2 class="rsvp-title" id="rsvp-heading">KINDLY RSVP<br>سعداء بمشاركتكم فرحتنا</h2><form id="rsvp-form" method="POST">
 <div class="field"><label for="guest-name">Your full name · الاسم</label><input id="guest-name" name="name" autocomplete="name" maxlength="100" required placeholder="Your name"></div>
-<div class="field"><label for="attendance">Will you be attending? · هل ستحضر؟</label><select id="attendance" name="attendance" required><option value="">Please select</option><option value="Accepts">Joyfully accepts · سأحضر</option><option value="Declines">Regretfully declines · أعتذر عن الحضور</option></select></div>
-<div class="field" id="guests-field"><label for="guests">Total guests, including you · العدد شاملاً أنت</label><input id="guests" name="guests" type="number" min="1" max="20" value="1" required></div>
+
+
 
 <div class="honeypot" aria-hidden="true"><label>Leave empty<input name="botcheck" tabindex="-1" autocomplete="off"></label></div>
 <input type="hidden" name="subject" value="Seif & Mariam — Wedding RSVP"><button class="submit" id="submit-rsvp" type="submit">CONFIRM RSVP</button><p class="privacy">Your reply is shared with the couple to organise the wedding.<br><span lang="ar" dir="rtl">تُشارك بيانات الرد مع العروسين لتنظيم الحفل فقط.</span></p><p class="msg" id="rsvp-status" role="status" aria-live="polite"></p><noscript>Enable JavaScript to send your RSVP.</noscript></form></div></section>
@@ -95,16 +95,15 @@ const wedding=new Date('2026-12-03T20:00:00+02:00').getTime();function tick(){le
 const musicBtn=document.getElementById('music');musicBtn.addEventListener('click',async()=>{try{if(audioEl.paused){await audioEl.play();musicBtn.classList.add('playing')}else{audioEl.pause();musicBtn.classList.remove('playing')}}catch(e){}});
 
 document.getElementById('show-rsvp').addEventListener('click',()=>{document.getElementById('confirm').hidden=false;document.getElementById('show-rsvp').setAttribute('aria-expanded','true');document.getElementById('confirm').scrollIntoView({behavior:'smooth',block:'start'});document.getElementById('guest-name').focus({preventScroll:true});});
-const form=document.getElementById('rsvp-form'), attendance=document.getElementById('attendance'), guests=document.getElementById('guests'), statusEl=document.getElementById('rsvp-status'),submitBtn=document.getElementById('submit-rsvp');
-attendance.addEventListener('change',()=>{const declined=attendance.value==='Declines';document.getElementById('guests-field').hidden=declined;guests.required=!declined;guests.disabled=declined;});
+const form=document.getElementById('rsvp-form'), statusEl=document.getElementById('rsvp-status'),submitBtn=document.getElementById('submit-rsvp');
 form.addEventListener('submit',async e=>{e.preventDefault();if(!form.reportValidity())return;
 const endpoint='https://api.web3forms.com/submit';
 const accessKey=window.INVITATION_CONFIG?.web3formsAccessKey||'';
 if(!accessKey.trim()){statusEl.textContent='RSVP collection is not open yet. Please contact Seif or Mariam directly. Your reply has not been sent.';return;}
 submitBtn.disabled=true;statusEl.textContent='Sending your reply…';
-const data=new FormData(form);data.set('access_key',accessKey);data.set('from_name','Seif & Mariam Wedding');if(attendance.value==='Declines')data.set('guests','0');
+const data=new FormData(form);data.set('access_key',accessKey);data.set('from_name','Seif & Mariam Wedding');data.set('attendance','Confirmed');
 const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),20000);
-try{const response=await fetch(endpoint,{method:'POST',body:data,headers:{Accept:'application/json'},signal:controller.signal});const result=await response.json();if(!response.ok||result.success!==true)throw new Error('Submission failed');statusEl.textContent=attendance.value==='Accepts'?'Thank you! Your attendance has been confirmed. We look forward to celebrating with you.':'Thank you for letting us know. We will miss you!';form.reset();guests.disabled=false;guests.required=true;document.getElementById('guests-field').hidden=false;}
+try{const response=await fetch(endpoint,{method:'POST',body:data,headers:{Accept:'application/json'},signal:controller.signal});const result=await response.json();if(!response.ok||result.success!==true)throw new Error('Submission failed');statusEl.textContent='Thank you! Your attendance has been confirmed. شكراً لتأكيد حضورك، يسعدنا مشاركتك فرحتنا!';form.reset();}
 catch(error){statusEl.textContent='We could not confirm delivery. Please try again, or contact Seif or Mariam. If you retry, the couple may receive a duplicate.';}
 finally{clearTimeout(timer);submitBtn.disabled=false;}});
 </script></body></html>
